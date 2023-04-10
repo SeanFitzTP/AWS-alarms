@@ -1,0 +1,120 @@
+= Quarkus/Kogito/Kotlin Starter project
+
+This is a starter project for Quarkus/Kogito/Kotlin in order to be used as a template
+
+Begin by replacing all cases of
+
+* ``LAMDA_NAME_HERE``
+* ``LamdaNameHere``
+* ``Lambda Name Here``
+* ``lambda-name-here``
+
+with your lambda name, formatted correctly per situation
+
+Update the decision table per your rules.
+As you add rules, update your input and output objects and tests.
+You can add more queries/endpoints by updating the header in the decision table.
+
+Queries follow this syntax:
+
+----
+query QueryNameHere $outputObjectName: /outputObjectType end
+----
+
+which would generate two endpoints
+
+* `/query-name-here`
+* `/query-name-here/first`
+
+with `OutputObjectType` as the object that will be returned from the endpoint
+
+
+== Quarkus Generated Docs below
+
+This project uses Quarkus, the Supersonic Subatomic Java Framework.
+
+If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+
+== Running the application in dev mode
+
+You can run your application in dev mode that enables live coding using:
+
+----
+./mvnw quarkus:dev
+----
+
+== Packaging for deployment in AWS using `make`
+
+`mvn package` won't work. Instead `build` using (preferably `alias` it)
+
+----
+ mvn clean install -Dnative -Dquarkus.native.container-build=true
+----
+
+Subsequently, you can deploy/update your lambda using
+
+----
+./make build
+./make deploy
+----
+
+== Packaging and running the application
+
+The application can be packaged using `./mvnw package`.
+It produces the `lambda-name-here-1.0.0-SNAPSHOT-runner.jar` file in the `/target` directory.
+Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/lib` directory.
+
+The application is now runnable using `java -jar target/lambda-name-here-1.0.0-SNAPSHOT-runner.jar`.
+
+== Creating a native executable
+
+You can create a native executable using: `./mvnw package -Pnative`.
+
+Or, if you don't have GraalVM installed, you can run the native executable build in a container using: `./mvnw package -Pnative -Dquarkus.native.container-build=true`.
+
+You can then execute your native executable with: `./target/lambda-name-here-1.0.0-SNAPSHOT-runner`
+
+If you want to learn more about building native executables, please consult https://quarkus.io/guides/building-native-image.
+
+== REST Endpoint
+
+----
+curl --location --request POST 'http://localhost:8080/taxEngine' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"taxRequest":{
+	 "state": "CO",
+	  "leadSource": "COSTCO",
+	  "product": "CUSTOMER_OWNED",
+	  "costStackType": "ALL"
+	}
+}'
+----
+
+== Jmeter
+
+Install `jmeter` (download zip and extract)
+
+- Set `JMETER_HOME` (where it is extracted)
+- Add `JMETER_HOME/bin` to `PATH`
+
+To run `jmeter` test
+
+```
+jmeter -n -t src/main/resources/lambda-name-here\ lambda\ test\ plan.jmx
+```
+
+== Architectural Decision Log
+
+[horizontal]
+Title:: Add decisions here. This is an example from tax-engine
+Status:: proposed, **accepted**, rejected, deprecated, superseded,
+Context:: ``lambda-name-here`` is meant for business users. Therefore the `product` should be business readable. Currently we
+use identifiers like ``J`` or ``K`` to indicate a ``product`` type. In our decision table we want to be able to use simple
+English like ``Customer Owned`` for business analysts to be able to update the sheet without difficulty. Currently all
+calls to ``tax-service`` (not ``lambda-name-here``) use the single-letter identifier though. Should we map the identifier
+_before_ calling ``lambda-name-here`` or _inside_ ``lambda-name-here``?
+Decision:: Map inside lambda-name-here using jackson's built in ability to call custom constructors
+Consequences:: None. This is probably the best solution possible. No need to change code elsewhere. All mapping is done
+at request time. Spreadsheet can use easy to read identifier, while endpoint can use either the code, identifier, or enum name.
+
