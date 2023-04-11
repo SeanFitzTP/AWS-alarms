@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  testalertchannelfunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      CodeUri: .
+      Description: ''
+      MemorySize: 160
+      Timeout: 3
+      Role: >-
+        arn:aws:iam::578915239930:role/service-role/test-alert-channel-function-role-36x3x2o0
+      Environment:
+        Variables:
+          ERROR_DASHBOARD: >-
+            https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:name=payment-serviceV2
+          SLACK_WEBHOOK_URL: >-
+            https://hooks.slack.com/services/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
+      RuntimePolicy:
+        UpdateRuntimeOn: Auto
